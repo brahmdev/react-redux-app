@@ -3,33 +3,17 @@ import logo from './logo.svg';
 import './App.css';
 import './ShowId';
 import ShowId from './ShowId';
+import {connect} from 'react-redux'
 
 class App extends Component {
 
   state= {
-    jsonResponse : '',
-    contacts: [{
-      "name": "Miguel",
-      "phone": "123456789",
-      },{
-          "name": "Peter",
-          "phone": "883292300348",
-      },{ 
-          "name": "Jessica",
-          "phone": "8743847638473", 
-      },{ 
-          "name": "Michael", 
-          "phone": "0988765553",
-    }], 
-    activeContact: {
-        "name": "Miguel",
-        "phone": "123456789",
-    }
+    jsonResponse : ''
   }
 
   componentDidMount() {
     console.log("did mount");
-    this.showContacts();
+    //this.showContacts();
   }
   fetchData() {
 
@@ -44,10 +28,24 @@ class App extends Component {
   }
 
   showContacts = () =>  {
-   return(
-    this.state.contacts.map(function(contact){
-      return <li key={contact.name}>{contact.name}</li>;
-    }));
+   
+    /*var namesList = this.state.contacts.map(function(contact){
+      return <li>{contact.name}</li>;
+    })
+    return (
+      <ul>
+        <li>{namesList}</li>
+      </ul>
+    );*/
+
+    return this.props.contacts.map((contact) => {
+      return (
+        <li
+          key={contact.phone}
+          //onClick={() => this.props.selectContact(contact)}
+          className='list-group-item'>{contact.name}</li>
+      );
+    });
   }
 
   render() {
@@ -67,9 +65,7 @@ class App extends Component {
           >
             Learn React
           </a>
-          <ul>
           {this.showContacts()}
-          </ul>
           <button onClick={() => this.fetchData()}>Fetch</button>
           <ShowId id={this.state.jsonResponse}></ShowId>
         </header>
@@ -78,4 +74,12 @@ class App extends Component {
   }
 }
 
-export default App;
+function mapStateToProps(state) {
+  return {
+    contacts: state.contacts
+  };
+}
+
+export default connect(mapStateToProps)(App)
+
+//export default App;
