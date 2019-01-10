@@ -3,7 +3,9 @@ import logo from './logo.svg';
 import './App.css';
 import './ShowId';
 import ShowId from './ShowId';
-import {connect} from 'react-redux'
+import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
+import selectContact from './actions/select_contact';
 
 class App extends Component {
 
@@ -42,10 +44,18 @@ class App extends Component {
       return (
         <li
           key={contact.phone}
-          //onClick={() => this.props.selectContact(contact)}
+          onClick={() => this.props.selectContact(contact)}
           className='list-group-item'>{contact.name}</li>
       );
     });
+  }
+
+  showActiveContact() {
+      return (
+        <li
+          key={this.props.activeContact.phone}
+          className='list-group-item'>{this.props.activeContact.name}</li>
+      );
   }
 
   render() {
@@ -53,18 +63,9 @@ class App extends Component {
     return (
       <div className="App">
         <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
+          <h3>Active Contact:</h3>
+          {this.showActiveContact()}
+          <h3>Contact List:</h3>
           {this.showContacts()}
           <button onClick={() => this.fetchData()}>Fetch</button>
           <ShowId id={this.state.jsonResponse}></ShowId>
@@ -76,10 +77,17 @@ class App extends Component {
 
 function mapStateToProps(state) {
   return {
-    contacts: state.contacts
+    contacts: state.contacts,
+    activeContact:  state.activeContact
   };
 }
 
-export default connect(mapStateToProps)(App)
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators({
+    selectContact: selectContact
+  }, dispatch);
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(App)
 
 //export default App;
